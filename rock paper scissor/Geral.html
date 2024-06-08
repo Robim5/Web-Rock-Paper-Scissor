@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper scisor</title>
+    
+    <style>
+        /* styles.css */
+/* universal selector - Applies to whole document */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background: #082c6c;
+    color: #fff;
+}
+/* To center everything in game */
+.game{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+}
+
+#subtitle{
+    font-size: 37px;
+    cursor: default;
+    background: linear-gradient(to right, #FFF 20%, rgb(255, 38, 0) 40%, rgb(0, 157, 255) 60%, #FFF 80%, green, #fff);
+    background-size: 200% auto;
+    color: #000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+    border: 4px solid #318067;
+    display: flex;
+    justify-content: center;
+    box-shadow: 3px 3px 3px 3px black inset;
+    border-radius: 10px;
+    position: absolute;
+    top: 13%;
+    text-shadow: none;
+   
+}
+
+@keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+}
+
+/* Title of the game */
+.title{
+    position: absolute;
+    top: 0;
+    font-size: 4rem;
+    z-index: 2;
+    text-shadow:
+    2px  2px 3px black,
+    2px -2px 3px black,
+   -2px  2px 3px black,
+   -2px -2px 3px black;
+}
+
+/* Score Board */
+.score{
+    display: flex;
+    width: 30vw;
+    justify-content: space-evenly;
+    position: absolute;
+    top: 25%;
+    z-index: 1;
+}
+
+/* Score */
+.p-count,.c-count{
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    top: 45%;
+}
+
+/* displaying three buttons in one line */
+.options{
+    position: absolute;
+    top: 60%;
+    display: flex;
+    width: 50vw;
+    justify-content: space-between;
+}
+
+/* Styling on all three buttons */
+#rock, #paper, #scissor{
+    padding: 0.8rem;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#rock{
+    background-image: url('rock.png');
+    background-color: green;
+}
+#paper{
+    background-image: url('paper.png');
+    background-color: blue;
+}
+#scissor{
+    background-image: url('scissor.png');
+    background-color: red;
+}
+
+
+
+.move{
+    font-size: 2rem;
+    font-weight: bold;
+    position: absolute;
+    top: 40%;
+}
+
+/* Reload button style */
+.reload {
+    display: none;
+    justify-content: center;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: green;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: 65%;
+    width: 150px;
+    height: 50px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    transition: all 300ms ease;
+}
+.reload:hover {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.result{
+    position: absolute;
+    top: 90%;
+    font-size: 2rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 612px)
+{ 
+    .title{
+        text-align: center;
+    }
+    .score{
+        position: absolute;
+        top: 200px;
+        width: 100vw;
+    }
+    .options{
+        width: 100vw;
+    }
+}
+    </style>
+</head>
+<body>
+
+	<section class="game">
+		<!--Title -->
+		<div class="title">Our New Game</div>
+        <p id="subtitle">Rock Paper Scissor</p>
+		
+		<!--Display Score of player and computer -->
+		<div class="score"> 
+			<div class="playerScore">
+				<h2>Player</h2>
+				<p class="p-count count">0</p>
+
+			</div>	 
+			<div class="computerScore">
+				<h2>Computer</h2>
+				<p class="c-count count">0</p>
+
+			</div>
+		</div>
+	
+		<div class="move">Choose your move</div>
+		
+		<!--Number of moves left before game ends -->
+		<div class="movesleft">Moves Left: 10 </div>
+		
+		<!--Options available to player to play game -->
+		<div class="options">
+			<button id="rock"></button>
+			<button id="paper"></button>
+			<button id="scissor"></button> 
+		</div>
+		
+		<!--Final result of game -->
+		<div class="result"></div>
+		
+		<!--Reload the game -->
+		<button class="reload"></button>
+
+	</section>
+
+
+    <script>
+        // Complete logic of game inside this function
+const game = () => {
+    let playerScore = 0;
+    let computerScore = 0;
+    let moves = 0;
+
+    // Function to 
+    const playGame = () => {
+        const rockBtn = document.querySelector('#rock');
+        const paperBtn = document.querySelector('#paper');
+        const scissorBtn = document.querySelector('#scissor');
+        const playerOptions = [rockBtn, paperBtn, scissorBtn];
+        const computerOptions = ['rock', 'paper', 'scissors'];
+
+        // Function to start playing game
+        playerOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                const movesLeft = document.querySelector('.movesleft');
+                moves++;
+                movesLeft.innerText = `Moves Left: ${10 - moves}`;
+
+                const choiceNumber = Math.floor(Math.random() * 3);
+                const computerChoice = computerOptions[choiceNumber];
+
+                // Function to check who wins
+                winner(this.id, computerChoice);
+
+                // Calling gameOver function after 10 moves
+                if (moves == 10) {
+                    gameOver(playerOptions, movesLeft);
+                }
+            });
+        });
+    };
+
+    // Function to decide winner
+    const winner = (player, computer) => {
+        const result = document.querySelector('.result');
+        const playerScoreBoard = document.querySelector('.p-count');
+        const computerScoreBoard = document.querySelector('.c-count');
+        if (player === computer) {
+            result.textContent = 'Tie';
+        }
+        else if (player === 'rock') {
+            if (computer === 'paper') {
+                result.textContent = 'Computer Won';
+                computerScore++;
+                computerScoreBoard.textContent = computerScore;
+            } else {
+                result.textContent = 'Player Won';
+                playerScore++;
+                playerScoreBoard.textContent = playerScore;
+            }
+        }
+        else if (player === 'scissor') {
+            if (computer === 'rock') {
+                result.textContent = 'Computer Won';
+                computerScore++;
+                computerScoreBoard.textContent = computerScore;
+            } else {
+                result.textContent = 'Player Won';
+                playerScore++;
+                playerScoreBoard.textContent = playerScore;
+            }
+        }
+        else if (player === 'paper') {
+            if (computer === 'scissors') {
+                result.textContent = 'Computer Won';
+                computerScore++;
+                computerScoreBoard.textContent = computerScore;
+            } else {
+                result.textContent = 'Player Won';
+                playerScore++;
+                playerScoreBoard.textContent = playerScore;
+            }
+        }
+    };
+
+    // Function to run when game is over
+    const gameOver = (playerOptions, movesLeft) => {
+        const chooseMove = document.querySelector('.move');
+        const result = document.querySelector('.result');
+        const reloadBtn = document.querySelector('.reload');
+
+        playerOptions.forEach(option => {
+            option.style.display = 'none';
+        });
+
+        chooseMove.innerText = 'Game Over!!';
+        movesLeft.style.display = 'none';
+
+        if (playerScore > computerScore) {
+            result.style.fontSize = '2rem';
+            result.innerText = 'You Won The Game';
+            result.style.color = '#308D46';
+        }
+        else if (playerScore < computerScore) {
+            result.style.fontSize = '2rem';
+            result.innerText = 'You Lost The Game';
+            result.style.color = 'red';
+        }
+        else {
+            result.style.fontSize = '2rem';
+            result.innerText = 'Tie';
+            result.style.color = 'grey';
+        }
+        reloadBtn.innerText = 'Restart';
+        reloadBtn.style.display = 'flex';
+        reloadBtn.addEventListener('click', () => {
+            window.location.reload();
+        });
+    };
+
+    // Calling playGame function inside game
+    playGame();
+};
+
+// Calling the game function
+game();
+
+    </script>
+
+</body>
+</html>
